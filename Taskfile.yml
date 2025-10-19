@@ -1,0 +1,74 @@
+# https://taskfile.dev
+
+version: '3'
+method: timestamp
+
+tasks:
+  default:
+    desc: List all tasks
+    silent: true
+    cmds:
+      - task --list-all
+
+  dev:
+    desc: Runs mprocs
+    deps:
+      - install
+    cmd: pnpm mprocs
+
+  next-dev:
+    desc: Runs next dev
+    deps:
+      - install
+    cmd: pnpm dev
+
+  inngest-dev:
+    desc: Runs the inngest dev server
+    deps:
+      - install
+    cmd: pnpx inngest-cli dev
+
+  db:migrate:
+    desc: Generate database migrations
+    deps:
+      - install
+    sources:
+      - ./prisma/schema.prisma
+    cmd: pnpm db:migrate
+
+  db:studio:
+    desc: Runs prisma studio
+    deps:
+      - install
+    cmd: pnpm db:studio
+
+  format:
+    desc: Runs prettier cli
+    deps:
+      - install
+    cmd: pnpm format
+
+  lint:
+    desc: Runs 'next lint'
+    silent: true
+    deps:
+      - install
+    cmd: pnpm lint
+
+  install:
+    desc: Install depencencies
+    status:
+      - test -d node_modules # triggers if node_modules does not exists
+    sources:
+      - package.json
+      - pnpm-lock.yaml
+    cmds:
+      - pnpm install
+
+  reset:
+    desc: Remove 'node_modules', '.next' and '.task' directories
+    silent: true
+    cmds:
+      - rm -rf node_modules
+      - rm -rf .next
+      - rm -rf .task
