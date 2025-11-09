@@ -26,6 +26,11 @@ import {
   SidebarMenuItem
 } from './ui/sidebar'
 import { authClient } from '@/lib/auth-client'
+import {
+  subscriptionQueryOptions,
+  userHasActiveSubscription
+} from '@/features/subscriptions/hooks/use-subscription'
+import { useQueryClient } from '@tanstack/react-query'
 
 const menuItems = [
   {
@@ -41,6 +46,9 @@ const menuItems = [
 export function AppSidebar() {
   const pathname = usePathname()
   const router = useRouter()
+  const queryClient = useQueryClient()
+
+  const subscriptionQuery = userHasActiveSubscription()
 
   return (
     <Sidebar collapsible="icon">
@@ -90,21 +98,24 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              tooltip={'Upgrade to Pro'}
-              className="gap-x-4 h-10 px-4"
-              onClick={() => {}}
-            >
-              <StarIcon className="size-4" />
-              <span>Upgrade to Pro</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
+          {!subscriptionQuery.hasActiveSubscription &&
+            !subscriptionQuery.isLoading && (
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  tooltip={'Upgrade to Pro'}
+                  className="gap-x-4 h-10 px-4"
+                  onClick={() => authClient.checkout({ slug: 'pro' })}
+                >
+                  <StarIcon className="size-4" />
+                  <span>Upgrade to Pro</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )}
           <SidebarMenuItem>
             <SidebarMenuButton
               tooltip={'Billing Portal'}
               className="gap-x-4 h-10 px-4"
-              onClick={() => {}}
+              onClick={() => authClient.customer.portal()}
             >
               <CreditCardIcon className="size-4" />
               <span>Billing Portal</span>
@@ -117,7 +128,12 @@ export function AppSidebar() {
               onClick={() =>
                 authClient.signOut({
                   fetchOptions: {
-                    onSuccess: () => router.push('/login')
+                    onSuccess: () => {
+                      router.push('/login')
+                      queryClient.invalidateQueries({
+                        queryKey: subscriptionQueryOptions.queryKey
+                      })
+                    }
                   }
                 })
               }
