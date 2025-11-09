@@ -17,17 +17,23 @@ export default function Home() {
     })
   )
 
-  const create = useMutation(
+  const createWorkflow = useMutation(
     trpc.createWorkflow.mutationOptions({
       onSuccess: () => {
         toast.success('Job queued')
+      },
+      onError: error => {
+        toast.error(`Error: ${error.message}`)
       }
     })
   )
 
   return (
     <div className="min-h-screen min-w-screen flex flex-col justify-center items-center">
-      <Button disabled={create.isPending} onClick={() => create.mutate()}>
+      <Button
+        disabled={createWorkflow.isPending}
+        onClick={() => createWorkflow.mutate()}
+      >
         Create Workflow
       </Button>
       {JSON.stringify(data, null, 2)}
