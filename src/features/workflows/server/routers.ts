@@ -1,8 +1,12 @@
-import { createTRPCRouter, protectedProcedure } from '@/trpc/init'
+import {
+  createTRPCRouter,
+  premiumProcedure,
+  protectedProcedure
+} from '@/trpc/init'
 import z from 'zod'
 
 export const workflowsRouter = createTRPCRouter({
-  create: protectedProcedure.mutation(async ({ ctx }) => {
+  create: premiumProcedure.mutation(async ({ ctx }) => {
     return ctx.prisma.workflow.create({
       data: {
         userId: ctx.auth.user.id,
