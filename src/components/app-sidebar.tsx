@@ -26,7 +26,11 @@ import {
   SidebarMenuItem
 } from './ui/sidebar'
 import { authClient } from '@/lib/auth-client'
-import { userHasActiveSubscription } from '@/features/subscriptions/hooks/use-subscription'
+import {
+  subscriptionQueryOptions,
+  userHasActiveSubscription
+} from '@/features/subscriptions/hooks/use-subscription'
+import { useQueryClient } from '@tanstack/react-query'
 
 const menuItems = [
   {
@@ -42,6 +46,7 @@ const menuItems = [
 export function AppSidebar() {
   const pathname = usePathname()
   const router = useRouter()
+  const queryClient = useQueryClient()
 
   const subscriptionQuery = userHasActiveSubscription()
 
@@ -123,7 +128,12 @@ export function AppSidebar() {
               onClick={() =>
                 authClient.signOut({
                   fetchOptions: {
-                    onSuccess: () => router.push('/login')
+                    onSuccess: () => {
+                      router.push('/login')
+                      queryClient.invalidateQueries({
+                        queryKey: subscriptionQueryOptions.queryKey
+                      })
+                    }
                   }
                 })
               }
