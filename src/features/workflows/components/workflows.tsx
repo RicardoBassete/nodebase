@@ -4,6 +4,7 @@ import React from 'react'
 import { EntityContainer, EntityHeader } from '@/components/entity-components'
 import { useCreateWorkflow, useSuspenseWorkflows } from '../hooks/use-workflows'
 import { useUpgradeModal } from '@/hooks/use-upgrade-modal'
+import { useRouter } from 'next/navigation'
 
 export const WorkflowsList = () => {
   const workflows = useSuspenseWorkflows()
@@ -22,13 +23,15 @@ export const WorkflowsList = () => {
 }
 
 export const WorkflowsHeader = ({ disabled }: { disabled?: boolean }) => {
-  const createWorkflow = useCreateWorkflow()
+  const router = useRouter()
 
+  const createWorkflow = useCreateWorkflow()
   const { handleError, modal } = useUpgradeModal()
 
   const handleCreate = () => {
     createWorkflow.mutate(undefined, {
-      onError: handleError
+      onError: handleError,
+      onSuccess: data => router.push(`/workflows/${data.id}`)
     })
   }
 
