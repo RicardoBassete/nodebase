@@ -12,24 +12,25 @@ tasks:
 
   dev:
     desc: Runs mprocs
+    silent: true
     deps:
       - install
-    cmd: pnpm mprocs
+    cmds:
+      - task: db:generate
+      - pnpm mprocs
 
-  next-dev:
-    desc: Runs next dev
+  db:generate:
+    desc: Generate prisma client
+    silent: true
     deps:
       - install
-    cmd: pnpm dev
-
-  inngest-dev:
-    desc: Runs the inngest dev server
-    deps:
-      - install
-    cmd: pnpx inngest-cli dev
+    sources:
+      - ./prisma/schema.prisma
+    cmd: pnpm db:generate
 
   db:migrate:
     desc: Generate database migrations
+    silent: true
     deps:
       - install
     sources:
@@ -38,12 +39,14 @@ tasks:
 
   db:studio:
     desc: Runs prisma studio
+    silent: true
     deps:
       - install
     cmd: pnpm db:studio
 
   format:
     desc: Runs prettier cli
+    silent: true
     deps:
       - install
     cmd: pnpm format
@@ -57,6 +60,7 @@ tasks:
 
   install:
     desc: Install depencencies
+    silent: true
     status:
       - test -d node_modules # triggers if node_modules does not exists
     sources:
