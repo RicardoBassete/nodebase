@@ -1,28 +1,34 @@
+import { inngest } from '@/inngest/client'
 import { auth } from '@/lib/auth'
+import prisma from '@/lib/database'
 import { initTRPC, TRPCError } from '@trpc/server'
 import { headers } from 'next/headers'
 import { cache } from 'react'
 
 export const createTRPCContext = cache(async () => {
-  return { userId: 'user_123' }
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  return { inngest, prisma, auth: session }
 })
 
-const t = initTRPC.create()
+type Context = Awaited<ReturnType<typeof createTRPCContext>>
+
+const t = initTRPC.context<Context>().create()
 
 export const createTRPCRouter = t.router
 export const createCallerFactory = t.createCallerFactory
 export const baseProcedure = t.procedure
 export const protectedProcedure = baseProcedure.use(async ({ ctx, next }) => {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
+  const auth = ctx.auth
 
-  if (!session) {
+  if (!auth) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
       message: 'Unauthorized'
     })
   }
 
-  return next({ ctx: { ...ctx, auth: session } })
+  return next({ ctx: { ...ctx, auth } })
 })
