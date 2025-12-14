@@ -1,3 +1,4 @@
+import { useWorkflowsParams } from '@/hooks/use-workflows-params'
 import { useTRPC } from '@/trpc/client'
 import {
   useMutation,
@@ -11,7 +12,9 @@ import { toast } from 'sonner'
  */
 export function useSuspenseWorkflows() {
   const trpc = useTRPC()
-  return useSuspenseQuery(trpc.workflows.getMany.queryOptions())
+  const [params] = useWorkflowsParams()
+
+  return useSuspenseQuery(trpc.workflows.getMany.queryOptions(params))
 }
 
 /**
@@ -25,7 +28,7 @@ export function useCreateWorkflow() {
     trpc.workflows.create.mutationOptions({
       onSuccess: data => {
         toast.success(`Workflow ${data.name} created`)
-        queryClient.invalidateQueries(trpc.workflows.getMany.queryOptions())
+        queryClient.invalidateQueries(trpc.workflows.getMany.queryOptions({}))
       },
       onError: error => {
         toast.error(`Error creating workflow: ${error.message}`)

@@ -8,11 +8,18 @@ import {
 import { prefetchWorkflows } from '@/features/workflows/server/prefetch'
 import { requireAuth } from '@/lib/auth-utils'
 import { HydrateClient } from '@/trpc/server'
+import { workflowsParamsLoader } from '@/features/workflows/server/params-loader'
+import type { SearchParams } from 'nuqs/server'
 
-export default async function Page() {
+type Props = {
+  searchParams: Promise<SearchParams>
+}
+
+export default async function Page(props: Props) {
   await requireAuth()
 
-  prefetchWorkflows()
+  const params = await workflowsParamsLoader(props.searchParams)
+  prefetchWorkflows(params)
 
   return (
     <WorkflowsContainer>
