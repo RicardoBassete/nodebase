@@ -11,8 +11,7 @@
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
-    "inngest:dev": "pnpm dlx inngest-cli dev -u http://localhost:3000/api/inngest",
-    "dev:all": "mprocs"
+    "inngest:dev": "pnpm dlx inngest-cli dev -u http://localhost:3000/api/inngest"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.40",
@@ -87,7 +86,6 @@
     "eslint": "^9",
     "eslint-config-next": "15.5.4",
     "inngest-cli": "^1.12.1",
-    "mprocs": "^0.7.3",
     "prettier": "3.6.2",
     "prisma": "^6.17.1",
     "tailwindcss": "^4",

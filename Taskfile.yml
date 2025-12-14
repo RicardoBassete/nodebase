@@ -17,7 +17,7 @@ tasks:
       - install
     cmds:
       - task: db:generate
-      - pnpm mprocs
+      - mprocs
 
   db:generate:
     desc: Generate prisma client
