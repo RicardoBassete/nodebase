@@ -5,6 +5,7 @@ import { polarClient } from '@/lib/polar'
 import { initTRPC, TRPCError } from '@trpc/server'
 import { headers } from 'next/headers'
 import { cache } from 'react'
+import superjson from 'superjson'
 
 export const createTRPCContext = cache(async () => {
   return { inngest, prisma }
@@ -12,7 +13,9 @@ export const createTRPCContext = cache(async () => {
 
 type Context = Awaited<ReturnType<typeof createTRPCContext>>
 
-const t = initTRPC.context<Context>().create()
+const t = initTRPC.context<Context>().create({
+  transformer: superjson
+})
 
 export const createTRPCRouter = t.router
 export const createCallerFactory = t.createCallerFactory

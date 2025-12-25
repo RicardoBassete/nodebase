@@ -36,3 +36,23 @@ export function useCreateWorkflow() {
     })
   )
 }
+
+/**
+ * Hook to remove a workflow.
+ */
+export function useRemoveWorkflow() {
+  const queryClient = useQueryClient()
+  const trpc = useTRPC()
+
+  return useMutation(
+    trpc.workflows.remove.mutationOptions({
+      onSuccess: data => {
+        toast.success(`Workflow"${data.name}" removed`)
+        queryClient.invalidateQueries(trpc.workflows.getMany.queryOptions({}))
+      },
+      onError: error => {
+        toast.error(`Error removing workflow: ${error.message}`)
+      }
+    })
+  )
+}
