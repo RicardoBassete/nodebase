@@ -1,18 +1,17 @@
 # https://taskfile.dev
 
 version: '3'
-method: timestamp
+
+silent: true
 
 tasks:
   default:
     desc: List all tasks
-    silent: true
     cmds:
       - task --list-all
 
   dev:
     desc: Runs mprocs
-    silent: true
     deps:
       - install
     cmds:
@@ -21,7 +20,6 @@ tasks:
 
   db:generate:
     desc: Generate prisma client
-    silent: true
     deps:
       - install
     sources:
@@ -30,7 +28,6 @@ tasks:
 
   db:migrate:
     desc: Generate database migrations
-    silent: true
     deps:
       - install
     sources:
@@ -39,28 +36,24 @@ tasks:
 
   db:studio:
     desc: Runs prisma studio
-    silent: true
     deps:
       - install
     cmd: pnpm db:studio
 
   format:
     desc: Runs prettier cli
-    silent: true
     deps:
       - install
     cmd: pnpm format
 
   lint:
     desc: Runs 'next lint'
-    silent: true
     deps:
       - install
     cmd: pnpm lint
 
   install:
     desc: Install depencencies
-    silent: true
     status:
       - test -d node_modules # triggers if node_modules does not exists
     sources:
@@ -71,7 +64,6 @@ tasks:
 
   reset:
     desc: Remove 'node_modules', '.next' and '.task' directories
-    silent: true
     cmds:
       - rm -rf node_modules
       - rm -rf .next
