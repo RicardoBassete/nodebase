@@ -4,3 +4,6 @@ procs:
 
   inngest:
     cmd: ['pnpm', 'run', 'inngest:dev']
+
+  prisma-studio:
+    cmd: ['pnpm', 'run', 'db:studio']
