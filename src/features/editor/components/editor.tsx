@@ -25,6 +25,9 @@ import { useSuspenseWorkflow } from '@/features/workflows/hooks/use-workflows'
 import { nodeComponents } from '@/config/node-components'
 import { AddNodeButton } from './add-node-button'
 
+import { useSetAtom } from 'jotai'
+import { editorAtom } from '../store/atoms'
+
 export const EditorLoading = () => {
   return <LoadingView message="Loading workflow..." />
 }
@@ -38,6 +41,8 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
 
   const [nodes, setNodes] = useState<Node[]>(workflow.nodes)
   const [edges, setEdges] = useState<Edge[]>(workflow.edges)
+
+  const setEditor = useSetAtom(editorAtom)
 
   const onNodesChange = useCallback(
     (changes: NodeChange[]) =>
@@ -64,6 +69,7 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={nodeComponents}
+        onInit={setEditor}
         fitView
       >
         <Background />
