@@ -56,7 +56,9 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
   )
   const onConnect = useCallback(
     (params: Connection) =>
-      setEdges(edgesSnapshot => addEdge(params, edgesSnapshot)),
+      setEdges(edgesSnapshot =>
+        addEdge({ ...params, type: 'smoothstep' }, edgesSnapshot)
+      ),
     []
   )
 
@@ -69,6 +71,7 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
         onEdgesChange={onEdgesChange}
         onConnect={onConnect}
         nodeTypes={nodeComponents}
+        defaultEdgeOptions={{ type: 'smoothstep' }}
         onInit={setEditor}
         fitView
       >
