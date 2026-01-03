@@ -1,11 +1,11 @@
 import { generateText } from 'ai'
-import { ollama } from 'ollama-ai-provider-v2'
 import { createOpenAI } from '@ai-sdk/openai'
 import { createAnthropic } from '@ai-sdk/anthropic'
+import { createGoogleGenerativeAI } from '@ai-sdk/google'
 
 import { inngest } from './client'
 
-const llama3 = ollama('llama3.2:3b')
+const google = createGoogleGenerativeAI()
 const openai = createOpenAI()
 const anthropic = createAnthropic()
 
@@ -13,11 +13,11 @@ export const execute = inngest.createFunction(
   { id: 'execute' },
   { event: 'execute/ai' },
   async ({ event, step }) => {
-    const { steps: llamaSteps } = await step.ai.wrap(
-      'llama-generate-text',
+    const { steps: geminiSteps } = await step.ai.wrap(
+      'gemini-generate-text',
       generateText,
       {
-        model: llama3,
+        model: google('gemini-2.5-flash'),
         system: 'You are a helpful assistant.',
         prompt: 'Write a vegeterian lasagna recipe for 4 people'
       }
@@ -43,6 +43,6 @@ export const execute = inngest.createFunction(
       }
     )
 
-    return { llamaSteps, openaiSteps, anthropicSteps }
+    return { llamaSteps: geminiSteps, openaiSteps, anthropicSteps }
   }
 )
