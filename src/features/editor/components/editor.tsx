@@ -74,6 +74,11 @@ export const Editor = ({ workflowId }: { workflowId: string }) => {
         defaultEdgeOptions={{ type: 'smoothstep' }}
         onInit={setEditor}
         fitView
+        snapGrid={[10, 10]}
+        snapToGrid
+        panOnScroll
+        panOnDrag={false}
+        selectionOnDrag
       >
         <Background />
         <Controls />
