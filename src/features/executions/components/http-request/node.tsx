@@ -1,10 +1,12 @@
 'use client'
 
-import type { NodeProps, Node } from '@xyflow/react'
+import { type NodeProps, type Node, useReactFlow } from '@xyflow/react'
 import { GlobeIcon } from 'lucide-react'
-import { memo } from 'react'
+import { memo, useEffect, useState } from 'react'
 
 import { BaseExecutionNode } from '@/features/executions/components/base-execution-node'
+import { NodeStatus } from '@/components/react-flow/node-status-indicator'
+import { HttpNodeFormValues, HttpRequestDialog } from './dialog'
 
 type HttpRequestNodeData = {
   endpoint?: string
@@ -21,16 +23,52 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
     ? `${nodeData.method || 'GET'}: ${nodeData.endpoint}`
     : 'Not Configured'
 
+  const [dialogOpen, setDialogOpen] = useState(false)
+  const { setNodes } = useReactFlow()
+
+  const handleSubmit = (data: HttpNodeFormValues) => {
+    setNodes(nodes =>
+      nodes.map(node =>
+        node.id === props.id
+          ? {
+              ...node,
+              data: {
+                ...node.data,
+                endpoint: data.endpoint,
+                method: data.method,
+                body: data.body
+              }
+            }
+          : node
+      )
+    )
+  }
+
+  const handleOpenSettings = () => {
+    setDialogOpen(true)
+  }
+
+  const nodeStatus: NodeStatus = 'initial'
+
   return (
     <>
+      <HttpRequestDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onSubmit={handleSubmit}
+        defaultEndpoint={nodeData?.endpoint} // TODO: initialValues={nodeData}
+        defaultMethod={nodeData?.method}
+        defaultBody={nodeData?.body}
+      />
       <BaseExecutionNode
         {...props}
         id={props.id}
         icon={GlobeIcon}
         name="HTTP Request"
         description={description}
-        onSettings={() => {}}
-        onDoubleClick={() => {}}
+        onSettings={handleOpenSettings}
+        onDoubleClick={handleOpenSettings}
+        status={nodeStatus}
       />
     </>
   )
