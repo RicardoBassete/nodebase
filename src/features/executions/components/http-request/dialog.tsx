@@ -47,25 +47,21 @@ interface Props {
   open: boolean
   onOpenChange: (open: boolean) => void
   onSubmit: (data: HttpNodeFormValues) => void
-  defaultEndpoint?: string
-  defaultMethod?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
-  defaultBody?: string
+  defaultValues?: Partial<HttpNodeFormValues>
 }
 
 export function HttpRequestDialog({
   open,
   onOpenChange,
   onSubmit,
-  defaultEndpoint = '',
-  defaultMethod = 'GET',
-  defaultBody = ''
+  defaultValues = {}
 }: Props) {
   const form = useForm<HttpNodeFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      endpoint: defaultEndpoint,
-      method: defaultMethod,
-      body: defaultBody
+      endpoint: defaultValues.endpoint || '',
+      method: defaultValues.method || 'GET',
+      body: defaultValues.body || ''
     }
   })
 
@@ -76,15 +72,15 @@ export function HttpRequestDialog({
   useEffect(() => {
     if (open) {
       form.reset({
-        endpoint: defaultEndpoint,
-        method: defaultMethod,
-        body: defaultBody
+        endpoint: defaultValues.endpoint || '',
+        method: defaultValues.method || 'GET',
+        body: defaultValues.body || ''
       })
     }
-  }, [open, defaultEndpoint, defaultMethod, defaultBody, form])
+  }, [open, defaultValues, form])
 
-  const handleSubmit = (data: HttpNodeFormValues) => {
-    onSubmit(data)
+  const handleSubmit = (values: HttpNodeFormValues) => {
+    onSubmit(values)
     onOpenChange(false)
   }
 

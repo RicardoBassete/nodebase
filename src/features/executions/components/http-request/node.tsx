@@ -12,7 +12,6 @@ type HttpRequestNodeData = {
   endpoint?: string
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
   body?: string
-  [key: string]: unknown
 }
 
 type HttpRequestNodeType = Node<HttpRequestNodeData>
@@ -26,7 +25,7 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
   const [dialogOpen, setDialogOpen] = useState(false)
   const { setNodes } = useReactFlow()
 
-  const handleSubmit = (data: HttpNodeFormValues) => {
+  const handleSubmit = (values: HttpNodeFormValues) => {
     setNodes(nodes =>
       nodes.map(node =>
         node.id === props.id
@@ -34,9 +33,7 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
               ...node,
               data: {
                 ...node.data,
-                endpoint: data.endpoint,
-                method: data.method,
-                body: data.body
+                ...values
               }
             }
           : node
@@ -56,9 +53,7 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         onSubmit={handleSubmit}
-        defaultEndpoint={nodeData?.endpoint} // TODO: initialValues={nodeData}
-        defaultMethod={nodeData?.method}
-        defaultBody={nodeData?.body}
+        defaultValues={nodeData}
       />
       <BaseExecutionNode
         {...props}
