@@ -8,7 +8,7 @@ import { BaseExecutionNode } from '@/features/executions/components/base-executi
 import { NodeStatus } from '@/components/react-flow/node-status-indicator'
 import { HttpNodeFormValues, HttpRequestDialog } from './dialog'
 
-type HttpRequestNodeData = {
+export type HttpRequestNodeData = {
   endpoint?: string
   method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH'
   body?: string

@@ -10,6 +10,20 @@ import { NodeType } from '@/generated/prisma'
 import type { Node, Edge } from '@xyflow/react'
 
 export const workflowsRouter = createTRPCRouter({
+  execute: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const workflow = await ctx.prisma.workflow.findUniqueOrThrow({
+        where: { id: input.id, userId: ctx.auth.user.id }
+      })
+
+      await ctx.inngest.send({
+        name: 'workflow/execute.workflow',
+        data: { workflowId: workflow.id }
+      })
+
+      return workflow
+    }),
   create: premiumProcedure.mutation(async ({ ctx }) => {
     return ctx.prisma.workflow.create({
       data: {
