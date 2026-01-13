@@ -28,7 +28,7 @@ import {
 import { authClient } from '@/lib/auth-client'
 import {
   subscriptionQueryOptions,
-  userHasActiveSubscription
+  useHasActiveSubscription
 } from '@/features/subscriptions/hooks/use-subscription'
 import { useQueryClient } from '@tanstack/react-query'
 
@@ -48,7 +48,7 @@ export function AppSidebar() {
   const router = useRouter()
   const queryClient = useQueryClient()
 
-  const subscriptionQuery = userHasActiveSubscription()
+  const subscriptionQuery = useHasActiveSubscription()
 
   return (
     <Sidebar collapsible="icon">

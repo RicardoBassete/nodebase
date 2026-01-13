@@ -30,3 +30,5 @@ export const ManualTriggerNode = memo((props: NodeProps) => {
     </>
   )
 })
+
+ManualTriggerNode.displayName = 'ManualTriggerNode'

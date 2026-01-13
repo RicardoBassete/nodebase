@@ -13,7 +13,7 @@ export function useSubscription() {
   return useQuery(subscriptionQueryOptions)
 }
 
-export function userHasActiveSubscription() {
+export function useHasActiveSubscription() {
   const { data, isLoading, ...rest } = useSubscription()
 
   const hasActiveSubscription =
