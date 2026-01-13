@@ -16,7 +16,13 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestNodeData> = async ({
     throw new NonRetriableError('HTTP Request Node: Endpoint is required')
   }
 
+  if (!data.variableName) {
+    // TODO: Publish error state for http request
+    throw new NonRetriableError('HTTP Request Node: Variable name is required')
+  }
+
   const result = await step.run('http-request', async () => {
+    const variableName = data.variableName!
     const endpoint = data.endpoint!
     const method = data.method || 'GET'
 
@@ -36,13 +42,17 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestNodeData> = async ({
       ? await response.json()
       : await response.text()
 
-    return {
-      ...context,
+    const responsePayload = {
       httpResponse: {
         status: response.status,
         statusText: response.statusText,
         data: responseData
       }
+    }
+
+    return {
+      ...context,
+      [variableName]: responsePayload
     }
   })
 
