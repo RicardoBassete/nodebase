@@ -21,10 +21,14 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestNodeData> = async ({
     throw new NonRetriableError('HTTP Request Node: Variable name is required')
   }
 
+  if (!data.method) {
+    // TODO: Publish error state for http request
+    throw new NonRetriableError('HTTP Request Node: Method not configured')
+  }
+
   const result = await step.run('http-request', async () => {
-    const variableName = data.variableName!
-    const endpoint = data.endpoint!
-    const method = data.method || 'GET'
+    const endpoint = data.endpoint
+    const method = data.method
 
     const options: KyOptions = { method }
 
@@ -52,7 +56,7 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestNodeData> = async ({
 
     return {
       ...context,
-      [variableName]: responsePayload
+      [data.variableName]: responsePayload
     }
   })
 
