@@ -1,7 +1,14 @@
-import { HttpRequestNodeData } from './node'
 import { NonRetriableError } from 'inngest'
 import ky, { type Options as KyOptions } from 'ky'
+import Handlebars from 'handlebars'
 import type { NodeExecutor } from '@/features/executions/types'
+import type { HttpRequestNodeData } from './node'
+
+Handlebars.registerHelper('json', (context) => {
+  const jsonString = JSON.stringify(context, null, 2)
+  const sageString = new Handlebars.SafeString(jsonString)
+  return sageString
+})
 
 export const httpRequestExecutor: NodeExecutor<HttpRequestNodeData> = async ({
   nodeId,
@@ -11,28 +18,36 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestNodeData> = async ({
 }) => {
   // TODO: Publish loading state for http request
 
-  const { endpoint, variableName, method } = data
 
-  if (!endpoint) {
+  if (!data.endpoint) {
     // TODO: Publish error state for http request
     throw new NonRetriableError('HTTP Request Node: Endpoint is required')
   }
 
-  if (!variableName) {
+  if (!data.variableName) {
     // TODO: Publish error state for http request
     throw new NonRetriableError('HTTP Request Node: Variable name is required')
   }
 
-  if (!method) {
+  if (!data.method) {
     // TODO: Publish error state for http request
     throw new NonRetriableError('HTTP Request Node: Method not configured')
   }
 
   const result = await step.run('http-request', async () => {
+    const endpoint = Handlebars.compile(data.endpoint)(context)
+    const method = data.method
+
     const options: KyOptions = { method }
 
     if (['POST', 'PUT', 'PATCH'].includes(method)) {
-      options.body = data.body
+      const resolved = Handlebars.compile(data.body || '{}')(context)
+      try {
+        JSON.parse(resolved)
+      } catch {
+        throw new NonRetriableError('HTTP Request Node: Body is not valid JSON')
+      }
+      options.body = resolved
       options.headers = {
         'Content-Type': 'application/json',
         ...options.headers
@@ -55,7 +70,7 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestNodeData> = async ({
 
     return {
       ...context,
-      [variableName]: responsePayload
+      [data.variableName]: responsePayload
     }
   })
 
