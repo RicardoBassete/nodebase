@@ -11,25 +11,24 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestNodeData> = async ({
 }) => {
   // TODO: Publish loading state for http request
 
-  if (!data.endpoint) {
+  const { endpoint, variableName, method } = data
+
+  if (!endpoint) {
     // TODO: Publish error state for http request
     throw new NonRetriableError('HTTP Request Node: Endpoint is required')
   }
 
-  if (!data.variableName) {
+  if (!variableName) {
     // TODO: Publish error state for http request
     throw new NonRetriableError('HTTP Request Node: Variable name is required')
   }
 
-  if (!data.method) {
+  if (!method) {
     // TODO: Publish error state for http request
     throw new NonRetriableError('HTTP Request Node: Method not configured')
   }
 
   const result = await step.run('http-request', async () => {
-    const endpoint = data.endpoint
-    const method = data.method
-
     const options: KyOptions = { method }
 
     if (['POST', 'PUT', 'PATCH'].includes(method)) {
@@ -56,7 +55,7 @@ export const httpRequestExecutor: NodeExecutor<HttpRequestNodeData> = async ({
 
     return {
       ...context,
-      [data.variableName]: responsePayload
+      [variableName]: responsePayload
     }
   })
 

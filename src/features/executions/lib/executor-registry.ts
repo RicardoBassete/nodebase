@@ -4,13 +4,13 @@ import { manualTriggerExecutor } from '@/features/triggers/components/manual-tri
 import { httpRequestExecutor } from '../components/http-request/executor'
 
 export const executorRegistry: Record<NodeType, NodeExecutor> = {
-  [NodeType.INITIAL]: () => Promise.resolve({}), // No-op executor for initial node
-  [NodeType.MANUAL_TRIGGER]: manualTriggerExecutor,
-  [NodeType.HTTP_REQUEST]: httpRequestExecutor
+  [NodeType.INITIAL]: (() => Promise.resolve({})) as NodeExecutor,
+  [NodeType.MANUAL_TRIGGER]: manualTriggerExecutor as NodeExecutor,
+  [NodeType.HTTP_REQUEST]: httpRequestExecutor as NodeExecutor
 }
 
 export const getExecutor = (nodeType: NodeType): NodeExecutor => {
-  const executor = executorRegistry[nodeType]
+  const executor = executorRegistry[nodeType] as NodeExecutor
   if (!executor) {
     throw new Error(`Executor for node type ${nodeType} not found`)
   }

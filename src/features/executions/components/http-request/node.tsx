@@ -31,12 +31,12 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
       nodes.map(node =>
         node.id === props.id
           ? {
-              ...node,
-              data: {
-                ...node.data,
-                ...values
-              }
+            ...node,
+            data: {
+              ...node.data,
+              ...values
             }
+          }
           : node
       )
     )
