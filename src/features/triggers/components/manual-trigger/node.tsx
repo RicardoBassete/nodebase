@@ -6,15 +6,23 @@ import { memo, useState } from 'react'
 import { BaseTriggerNode } from '../base-trigger-node'
 import { ManualTriggerDialog } from './dialog'
 import { NodeStatus } from '@/components/react-flow/node-status-indicator'
+import { useNodeStatus } from '@/features/executions/hooks/use-node-status'
+import { MANUAL_TRIGGER_CHANNEL_NAME } from '@/inngest/channels/manual-trigger'
+import { fetchManualTriggerRealtimeToken } from './actions'
 
 export const ManualTriggerNode = memo((props: NodeProps) => {
   const [dialogOpen, setDialogOpen] = useState(false)
 
-  const nodeStatus: NodeStatus = 'initial'
-
   const handleOpenSettings = () => {
     setDialogOpen(true)
   }
+
+  const nodeStatus = useNodeStatus({
+    nodeId: props.id,
+    channel: MANUAL_TRIGGER_CHANNEL_NAME,
+    topic: 'status',
+    refreshToken: fetchManualTriggerRealtimeToken
+  })
 
   return (
     <>

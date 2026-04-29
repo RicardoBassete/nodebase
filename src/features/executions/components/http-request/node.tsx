@@ -7,6 +7,9 @@ import { memo, useEffect, useState } from 'react'
 import { BaseExecutionNode } from '@/features/executions/components/base-execution-node'
 import { NodeStatus } from '@/components/react-flow/node-status-indicator'
 import { HttpNodeFormValues, HttpRequestDialog } from './dialog'
+import { useNodeStatus } from '../../hooks/use-node-status'
+import { fetchHttpRequestRealtimeToken } from './actions'
+import { HTTP_REQUEST_CHANNEL_NAME } from '@/inngest/channels/http-request'
 
 export type HttpRequestNodeData = {
   variableName: string
@@ -31,12 +34,12 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
       nodes.map(node =>
         node.id === props.id
           ? {
-            ...node,
-            data: {
-              ...node.data,
-              ...values
+              ...node,
+              data: {
+                ...node.data,
+                ...values
+              }
             }
-          }
           : node
       )
     )
@@ -46,7 +49,12 @@ export const HttpRequestNode = memo((props: NodeProps<HttpRequestNodeType>) => {
     setDialogOpen(true)
   }
 
-  const nodeStatus: NodeStatus = 'initial'
+  const nodeStatus = useNodeStatus({
+    nodeId: props.id,
+    channel: HTTP_REQUEST_CHANNEL_NAME,
+    topic: 'status',
+    refreshToken: fetchHttpRequestRealtimeToken
+  })
 
   return (
     <>
