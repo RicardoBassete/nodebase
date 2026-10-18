@@ -41,13 +41,13 @@ tasks:
     cmd: pnpm db:studio
 
   format:
-    desc: Runs prettier cli
+    desc: Runs oxfmt
     deps:
       - install
     cmd: pnpm format
 
   lint:
-    desc: Runs 'next lint'
+    desc: Runs oxlint
     deps:
       - install
     cmd: pnpm lint
