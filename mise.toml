@@ -1,5 +1,5 @@
 [tools]
-mprocs = "latest"
+mprocs = "0.9.6"
 node = "24"
 pnpm = "latest"
 task = "latest"
